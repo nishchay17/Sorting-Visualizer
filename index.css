@@ -1,0 +1,18 @@
+body{
+    background-color: #192a56;
+    color: white;
+}
+
+
+
+.block{
+    padding: 0px;
+    width: 20px;
+    background-color: #00a8ff;
+    transition: 0.4s all ease;
+}
+
+.blockId{
+    font-size: 0%;
+}
+  
