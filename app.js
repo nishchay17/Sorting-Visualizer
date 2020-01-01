@@ -1,7 +1,12 @@
 const container = document.getElementById('container');
 const sort = document.getElementById('sort');
 const shuffle = document.getElementById('shuffle');
+const sortName = document.getElementById('sortName');
+const selectionbtn = document.getElementById('selection');
+const bubblebtn = document.getElementById('bubble');
 let isSorted = false;
+let isSorting = false;
+let speed = 250;
 const green = "#4cd137";
 const blue = "#00a8ff";
 const red = "#e84118";
@@ -25,7 +30,7 @@ function createBlocks(number){
     isSorted = false;
 }
 
-function swap(el1, el2, from, to, delay = 250){
+function swap(el1, el2, from, to, delay = speed){
     return new Promise(resolve => {
         let val1 =  parseInt(el1.childNodes[0].innerHTML, 10);
         let val2 =  parseInt(el2.childNodes[0].innerHTML, 10);
@@ -44,6 +49,9 @@ function swap(el1, el2, from, to, delay = 250){
 }
 
 function shuffleIt(){
+    
+    if(isSorting)   return;
+
     let blocks = document.querySelectorAll(".block");
     for (let i = 0; i < 25; ++i) {
         const value = Math.floor(Math.random() * 500);
@@ -55,8 +63,10 @@ function shuffleIt(){
 }
 
 async function bubbleSort(delay = 100){  
-    if(isSorted)
+    if(isSorted && isSorting)
         return;
+
+    isSorting = true;
     let blocks = document.querySelectorAll(".block");
 	flag = false;
 	n = blocks.length;
@@ -64,12 +74,6 @@ async function bubbleSort(delay = 100){
 		for (let j = 0 ; j < n - i - 1; ++j){
             blocks[j].style.backgroundColor = red;
             blocks[j + 1].style.backgroundColor = red;
-
-            await new Promise(resolve =>
-                setTimeout(() => {
-                resolve();
-                }, delay)
-            );
 
             let value1 = parseInt(blocks[j].childNodes[0].innerHTML, 10);
             let value2 = parseInt(blocks[j + 1].childNodes[0].innerHTML, 10);
@@ -87,12 +91,14 @@ async function bubbleSort(delay = 100){
 			break;
     }
     isSorted = true;
+    isSorting = false;
 }
 
 async function selectionSort(delay = 100){
 
-    if(isSorted)    return;
+    if(isSorted && isSorting)    return;
 
+    isSorting = true;
     let array = document.querySelectorAll(".block");
     n = array.length;
     let minIndex;
@@ -116,10 +122,27 @@ async function selectionSort(delay = 100){
         array = document.querySelectorAll(".block");
     }
     isSorted = true;
+    isSorting = false;
+}
+
+function sortFunction(){
+    speed = document.querySelector('input[name="speed"]:checked').value;
+    if(sortName.innerHTML == "Selection Sort")
+        selectionSort();
+    else if(sortName.innerHTML == "Bubble Sort")
+        bubbleSort();
 }
 
 
-sort.addEventListener('click', bubbleSort);
-// sort.addEventListener('click', selectionSort);
+selectionbtn.addEventListener('click', () => {
+    sortName.innerHTML = "Selection Sort";
+});
+
+bubblebtn.addEventListener('click', () => {
+    sortName.innerHTML = "Bubble Sort";
+});
+
+sort.addEventListener('click', sortFunction);
 shuffle.addEventListener('click', shuffleIt);
+
 createBlocks(25);
